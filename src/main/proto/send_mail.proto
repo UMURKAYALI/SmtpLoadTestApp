@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+option java_package = "demo";
+option java_multiple_files = true;
+
+
+message Email {
+
+    message Headers {
+        string ClientCorrelationId = 1;
+        string ClientCustomHeaderName = 2;
+    }
+
+    message Content {
+        string subject = 1;
+        string plainText = 2;
+        string html = 3;
+    }
+
+    message To {
+        string address = 1;
+        string displayName = 2;
+    }
+
+    message Cc {
+        string address = 1;
+        string displayName = 2;
+    }
+
+    message Bcc {
+        string address = 1;
+        string displayName = 2;
+    }
+
+    message Recipients {
+        repeated To to = 1;
+        repeated Cc cc = 2;
+        repeated Bcc bcc = 3;
+    }
+
+    message Attachments {
+        string name = 1;
+        string contentType = 2;
+        string contentInBase64 = 3;
+    }
+
+    message Replyto {
+        string address = 1;
+        string displayName = 2;
+    }
+
+    Headers headers = 1;
+    string senderAddress = 2;
+    Content content = 3;
+    Recipients recipients = 4;
+    repeated Attachments attachments = 5;
+    repeated Replyto replyTo = 6;
+    bool userEngagementTrackingDisabled = 7;
+}
+
+message EmailSendResult {
+    
+
+    message ErrorDetail {
+
+        message ErrorAdditionalInfo {
+            string info;
+            string type;
+        }
+
+        repeated ErrorAdditionalInfo additionalInfo = 1;
+        string code = 2;
+        repeated ErrorDetail details = 3;
+        string message = 4;
+        string target;
+
+    }
+
+    message EmailSendStatus {
+        Canceled = 0;
+        Failed = 1;
+        NotStarted = 2;
+        Running = 3;
+        Succeeded = 4;
+    }
+
+    string id = 1;
+    ErrorDetail error = 2;
+    EmailSendStatus status = 3;
+}
+
+service SMTPService{
+  rpc sendEmail(Email) returns(EmailSendResult);
+}
